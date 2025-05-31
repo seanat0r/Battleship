@@ -1,7 +1,7 @@
 // Importing JS
 import "core-js";
 import "regenerator-runtime/runtime";
-
+import "";
 // Importing CSS
 import "./styles/reset.css";
 import "./styles/style.css";
