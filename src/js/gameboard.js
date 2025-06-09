@@ -1,4 +1,4 @@
-export default class Gameboard {
+/* export  default */ class Gameboard {
   #boardInfo = {
     nothing: 'O',
     'Has ship': 'S',
@@ -6,16 +6,16 @@ export default class Gameboard {
   }
 
   #positionAtoB = {
-    A: 1,
-    B: 2,
-    C: 3,
-    D: 4,
-    E: 5,
-    F: 6,
-    G: 7,
-    H: 8,
-    I: 9,
-    J: 10
+    A: 0,
+    B: 1,
+    C: 2,
+    D: 3,
+    E: 4,
+    F: 5,
+    G: 6,
+    H: 7,
+    I: 8,
+    J: 9
   }
 
   #howManyShipsUsed = {
@@ -36,23 +36,61 @@ export default class Gameboard {
     return board
   }
 
-  #placeShip (position) {}
+  #placeShip (ship, position, rotation, board) {
+    function isTaken (row, column) {
+      if (board[row][column] === 'S') {
+        return true
+      }
+      return false
+    }
+
+    if (rotation !== 'vertical' && rotation !== 'horizontal') return console.log('Rotation is invalid: ' + rotation)
+    // get the colum Position; extract it from the string and translate it from an obj
+    const letter = position.slice(-1)
+    const columPosition = this.#positionAtoB[letter]
+
+    // get the row Position
+    const rowPosition = parseInt(position.slice(0, 1))
+
+    // get the length of the ship
+    const shipLength = parseInt(ship.slice(0, 1))
+
+    if (isTaken(rowPosition, columPosition)) {
+      return
+    }
+
+    // if the ships has a length of 1, jus placed it at the position
+    if (shipLength === 1) {
+      board[rowPosition][columPosition] = this.#boardInfo['Has ship']
+    } else if (shipLength > 1 && rotation === 'vertical') {
+      for (let i = rowPosition; i < (rowPosition + shipLength); i++) {
+        board[i][columPosition] = ''
+        board[i][columPosition] = this.#boardInfo['Has ship']
+      }
+    } else if (shipLength > 1 && rotation === 'horizontal') {
+      for (let i = columPosition; i < (columPosition + shipLength); i++) {
+        board[rowPosition][i] = ''
+        board[rowPosition][i] = this.#boardInfo['Has ship']
+      }
+    }
+  }
+
   #checkShip (ship) {
-    if (this.#howManyShipsUsed[ship] !== 0) {
+    if (this.#howManyShipsUsed[ship] <= 0) {
       console.warn(`${ship} already placed!`)
       return true
     }
     return false
   }
 
-  setShip (ship, position) {
+  setShip (ship, position, rotation, board) {
     switch (ship) {
       case '4-Long Ships':
         if (this.#checkShip(ship)) break
 
         this.#howManyShipsUsed['4-Long Ships']--
 
-        this.#placeShip(position)
+        this.#placeShip(ship, position, rotation, board)
         break
 
       case '3-Long Ships':
@@ -60,7 +98,7 @@ export default class Gameboard {
 
         this.#howManyShipsUsed['3-Long Ships']--
 
-        this.#placeShip(position)
+        this.#placeShip(ship, position, rotation, board)
         break
 
       case '2-Long Ships':
@@ -68,7 +106,7 @@ export default class Gameboard {
 
         this.#howManyShipsUsed['2-Long Ships']--
 
-        this.#placeShip(position)
+        this.#placeShip(ship, position, rotation, board)
         break
 
       case '1-Long Ships':
@@ -76,8 +114,17 @@ export default class Gameboard {
 
         this.#howManyShipsUsed['1-Long Ships']--
 
-        this.#placeShip(position)
+        this.#placeShip(ship, position, rotation, board)
         break
+
+      default:
+        console.warn(`Something went wrong to place/ set the ship. Ship Value: ${ship}, Position: ${position}`)
     }
   }
 }
+const board = new Gameboard()
+const newBoard = board.createBoard()
+
+board.setShip('4-Long Ships', '1A', 'horizontal', newBoard)
+board.setShip('3-Long Ships', '0A', 'vertical', newBoard)
+console.log(newBoard)
