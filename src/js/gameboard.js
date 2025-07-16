@@ -43,6 +43,27 @@
       }
       return false
     }
+    const resetPlacing = (rowPosition, columPosition, counter, rotation) => {
+      if (counter === 0) return; 
+      if (rotation === "horizontal"){
+        for (let i = rowPosition + counter; i >= rowPosition; i--) {
+        
+        board[i][columPosition] = ''
+        board[i][columPosition] = this.#boardInfo.nothing
+      }
+      } else if (rotation === "vertical") {
+        for (let i = columPosition + counter; i >= columPosition; i--) {
+    
+        board[rowPosition][i] = ''
+        board[rowPosition][i] = this.#boardInfo.nothing
+        
+      }
+      } else {
+        console.log(`Something went wrong: ROTATION: ${rotation}`);
+        return;
+      }
+    }
+    let counter = 0;
 
     if (rotation !== 'vertical' && rotation !== 'horizontal') return console.log('Rotation is invalid: ' + rotation)
     // get the colum Position; extract it from the string and translate it from an obj
@@ -55,22 +76,37 @@
     // get the length of the ship
     const shipLength = parseInt(ship.slice(0, 1))
 
+    // if @ position of row/column already a ship, don't place any
     if (isTaken(rowPosition, columPosition)) {
+      console.warn(`At ${rowPosition} or ${columPosition} is already taken!`)
       return
     }
 
     // if the ships has a length of 1, jus placed it at the position
+    //!!! PLATZIERE NICHT AUSSERHALB VOM SPIELFELD
     if (shipLength === 1) {
       board[rowPosition][columPosition] = this.#boardInfo['Has ship']
     } else if (shipLength > 1 && rotation === 'vertical') {
       for (let i = rowPosition; i < (rowPosition + shipLength); i++) {
+        if (isTaken(i, columPosition)) {
+          console.warn(`At ${rowPosition} or ${columPosition} is already taken!`);
+          resetPlacing(rowPosition, columPosition, counter, rotation)
+          return;
+        }
         board[i][columPosition] = ''
         board[i][columPosition] = this.#boardInfo['Has ship']
+        counter ++;
       }
     } else if (shipLength > 1 && rotation === 'horizontal') {
       for (let i = columPosition; i < (columPosition + shipLength); i++) {
+        if (isTaken(rowPosition, i)) {
+          console.warn(`At ${rowPosition} or ${columPosition} is already taken!`);
+          resetPlacing(rowPosition, columPosition, counter, rotation)
+          return;
+        }
         board[rowPosition][i] = ''
         board[rowPosition][i] = this.#boardInfo['Has ship']
+        counter++;
       }
     }
   }
@@ -127,4 +163,6 @@ const newBoard = board.createBoard()
 
 board.setShip('4-Long Ships', '1A', 'horizontal', newBoard)
 board.setShip('3-Long Ships', '0A', 'vertical', newBoard)
+board.setShip('3-Long Ships', '1J', 'vertical', newBoard)
 console.log(newBoard)
+
