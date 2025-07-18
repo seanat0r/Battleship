@@ -35,23 +35,17 @@
     }
     return board
   }
-
-  #placeShip (ship, position, rotation, board) {
-    function isTaken (row, column) {
-      if (board[row][column] === 'S') {
-        return true
-      }
-      return false
-    }
-    const resetPlacing = (rowPosition, columPosition, counter, rotation) => {
+  #resetPlacing (rowPosition, columPosition, counter, rotation, ship){
       if (counter === 0) return; 
       if (rotation === "horizontal"){
+        this.#howManyShipsUsed[ship]++
         for (let i = rowPosition + counter; i >= rowPosition; i--) {
         
         board[i][columPosition] = ''
         board[i][columPosition] = this.#boardInfo.nothing
       }
       } else if (rotation === "vertical") {
+        this.#howManyShipsUsed[ship]++
         for (let i = columPosition + counter; i >= columPosition; i--) {
     
         board[rowPosition][i] = ''
@@ -63,6 +57,26 @@
         return;
       }
     }
+    #outOfBounds (rotation, columPosition, rowPosition, shipLength, ship) {
+      if (
+        (rotation === "horizontal" && columPosition + shipLength > 10) ||
+        (rotation === "vertical" && rowPosition + shipLength > 10)
+      )  {
+        console.warn(`Ship goes ou of bounds at ROW ${rowPosition} COLUM ${columPosition} SHIPLENGTH ${shipLength}`)
+        this.#howManyShipsUsed[ship]++
+        return true;
+      }
+      return false;
+    }
+
+  #placeShip (ship, position, rotation, board) {
+    function isTaken (row, column) {
+      if (board[row][column] === 'S') {
+        return true
+      }
+      return false
+    }
+    
     let counter = 0;
 
     if (rotation !== 'vertical' && rotation !== 'horizontal') return console.log('Rotation is invalid: ' + rotation)
@@ -75,6 +89,9 @@
 
     // get the length of the ship
     const shipLength = parseInt(ship.slice(0, 1))
+
+    //checks if the ship in the playfield
+    if (this.#outOfBounds(rotation, columPosition, rowPosition, shipLength, ship)) return;
 
     // if @ position of row/column already a ship, don't place any
     if (isTaken(rowPosition, columPosition)) {
@@ -90,7 +107,7 @@
       for (let i = rowPosition; i < (rowPosition + shipLength); i++) {
         if (isTaken(i, columPosition)) {
           console.warn(`At ${rowPosition} or ${columPosition} is already taken!`);
-          resetPlacing(rowPosition, columPosition, counter, rotation)
+          this.#resetPlacing(rowPosition, columPosition, counter, rotation, ship)
           return;
         }
         board[i][columPosition] = ''
@@ -101,7 +118,7 @@
       for (let i = columPosition; i < (columPosition + shipLength); i++) {
         if (isTaken(rowPosition, i)) {
           console.warn(`At ${rowPosition} or ${columPosition} is already taken!`);
-          resetPlacing(rowPosition, columPosition, counter, rotation)
+          this.#resetPlacing(rowPosition, columPosition, counter, rotation, ship)
           return;
         }
         board[rowPosition][i] = ''
@@ -125,7 +142,7 @@
         if (this.#checkShip(ship)) break
 
         this.#howManyShipsUsed['4-Long Ships']--
-
+        
         this.#placeShip(ship, position, rotation, board)
         break
 
@@ -158,11 +175,15 @@
     }
   }
 }
+
+
+
 const board = new Gameboard()
 const newBoard = board.createBoard()
 
-board.setShip('4-Long Ships', '1A', 'horizontal', newBoard)
-board.setShip('3-Long Ships', '0A', 'vertical', newBoard)
-board.setShip('3-Long Ships', '1J', 'vertical', newBoard)
-console.log(newBoard)
+board.setShip('4-Long Ships', '9A', 'horizontal', newBoard)
+board.setShip('3-Long Ships', '00', 'horizontal', newBoard)
+board.setShip('3-Long Ships', '00', 'vertical', newBoard)
+board.setShip("2-Long Ships", "0I", "horizontal", newBoard)
+console.table(newBoard)
 
