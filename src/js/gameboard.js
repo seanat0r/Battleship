@@ -24,6 +24,9 @@
     '2-Long Ships': 3,
     '1-Long Ships': 4
   }
+  //
+  // CREATING BOARD
+  //
 
   createBoard () {
     const board = []
@@ -35,6 +38,9 @@
     }
     return board
   }
+  //
+  // PLACE SHIP
+  //
   #resetPlacing (rowPosition, columPosition, counter, rotation, ship){
       if (counter === 0) return; 
       if (rotation === "horizontal"){
@@ -58,7 +64,6 @@
       }
     }
     #outOfBounds (rotation, columPosition, rowPosition, shipLength, ship) {
-      console.log(`Colum + shiplength: ${columPosition + shipLength}; Row + shiplength: ${rowPosition + shipLength}`)
       if (
         (rotation === "horizontal" && columPosition + shipLength > 10) ||
         (rotation === "vertical" && rowPosition + shipLength > 10)
@@ -174,6 +179,40 @@
         console.warn(`Something went wrong to place/ set the ship. Ship Value: ${ship}, Position: ${position}`)
     }
   }
+  //
+  // ATTACKING
+  //
+
+  receiveAttack(position, enemybBoard, displayEnemyBoard) {
+    const letter = position.slice(-1)
+    const columPosition = this.#positionAtoB[letter]
+
+    const rowPosition = parseInt(position.slice(0, 1))
+
+    console.log(enemybBoard[rowPosition][columPosition])
+
+    if (enemybBoard[rowPosition][columPosition] === this.#boardInfo['Has ship']) {
+      // HIT!
+      console.log(`A Ship got hit! At Position ROW: ${rowPosition} COLUM: ${columPosition}`)
+
+      enemybBoard[rowPosition][columPosition] === this.#boardInfo['Ship got Hit']
+      displayEnemyBoard[rowPosition][columPosition] === this.#boardInfo['Ship got Hit']
+
+      return {
+        gotHit: true,
+        enemybBoard: 'Ship got Hit',
+        displayEnemyBoard: 'Ship got Hit',
+      }
+    }
+    // MISS!
+    displayEnemyBoard[rowPosition][columPosition] === this.#boardInfo['nothing']
+
+    return {
+      gotHit: false,
+      enemybBoard: 'nothing',
+      displayEnemyBoard: 'nothing',
+    }
+  }
 }
 
 
@@ -186,5 +225,6 @@ board.setShip('3-Long Ships', '0J', 'horizontal', newBoard)
 board.setShip('3-Long Ships', '0A', 'vertical', newBoard)  
 board.setShip("2-Long Ships", "0I", "horizontal", newBoard)
 board.setShip('3-Long Ships', '4H', 'horizontal', newBoard) 
+board.receiveAttack("0A", newBoard, newBoard)
 console.table(newBoard)
 
