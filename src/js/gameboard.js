@@ -58,6 +58,7 @@
       }
     }
     #outOfBounds (rotation, columPosition, rowPosition, shipLength, ship) {
+      console.log(`Colum + shiplength: ${columPosition + shipLength}; Row + shiplength: ${rowPosition + shipLength}`)
       if (
         (rotation === "horizontal" && columPosition + shipLength > 10) ||
         (rotation === "vertical" && rowPosition + shipLength > 10)
@@ -100,7 +101,6 @@
     }
 
     // if the ships has a length of 1, jus placed it at the position
-    //!!! PLATZIERE NICHT AUSSERHALB VOM SPIELFELD
     if (shipLength === 1) {
       board[rowPosition][columPosition] = this.#boardInfo['Has ship']
     } else if (shipLength > 1 && rotation === 'vertical') {
@@ -182,8 +182,9 @@ const board = new Gameboard()
 const newBoard = board.createBoard()
 
 board.setShip('4-Long Ships', '9A', 'horizontal', newBoard)
-board.setShip('3-Long Ships', '00', 'horizontal', newBoard)
-board.setShip('3-Long Ships', '00', 'vertical', newBoard)
+board.setShip('3-Long Ships', '0J', 'horizontal', newBoard) 
+board.setShip('3-Long Ships', '0A', 'vertical', newBoard)  
 board.setShip("2-Long Ships", "0I", "horizontal", newBoard)
+board.setShip('3-Long Ships', '4H', 'horizontal', newBoard) 
 console.table(newBoard)
 
