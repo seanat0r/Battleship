@@ -2,7 +2,8 @@
   #boardInfo = {
     nothing: 'O',
     'Has ship': 'S',
-    'Ship got Hit': 'X'
+    'Ship got Hit': 'X',
+    missed: 'M'
   }
 
   #positionAtoB = {
@@ -24,9 +25,9 @@
     '2-Long Ships': 3,
     '1-Long Ships': 4
   }
-  //
-  // CREATING BOARD
-  //
+  //*
+  //* CREATING BOARD
+  //*
 
   createBoard () {
     const board = []
@@ -38,42 +39,40 @@
     }
     return board
   }
-  //
-  // PLACE SHIP
-  //
-  #resetPlacing (rowPosition, columPosition, counter, rotation, ship){
-      if (counter === 0) return; 
-      if (rotation === "horizontal"){
-        this.#howManyShipsUsed[ship]++
-        for (let i = rowPosition + counter; i >= rowPosition; i--) {
-        
+
+  //*
+  //* PLACE SHIP
+  //*
+  #resetPlacing (rowPosition, columPosition, counter, rotation, ship) {
+    if (counter === 0) return
+    if (rotation === 'horizontal') {
+      this.#howManyShipsUsed[ship]++
+      for (let i = rowPosition + counter; i >= rowPosition; i--) {
         board[i][columPosition] = ''
         board[i][columPosition] = this.#boardInfo.nothing
       }
-      } else if (rotation === "vertical") {
-        this.#howManyShipsUsed[ship]++
-        for (let i = columPosition + counter; i >= columPosition; i--) {
-    
+    } else if (rotation === 'vertical') {
+      this.#howManyShipsUsed[ship]++
+      for (let i = columPosition + counter; i >= columPosition; i--) {
         board[rowPosition][i] = ''
         board[rowPosition][i] = this.#boardInfo.nothing
-        
       }
-      } else {
-        console.log(`Something went wrong: ROTATION: ${rotation}`);
-        return;
-      }
+    } else {
+      console.log(`Something went wrong: ROTATION: ${rotation}`)
     }
-    #outOfBounds (rotation, columPosition, rowPosition, shipLength, ship) {
-      if (
-        (rotation === "horizontal" && columPosition + shipLength > 10) ||
-        (rotation === "vertical" && rowPosition + shipLength > 10)
-      )  {
-        console.warn(`Ship goes ou of bounds at ROW ${rowPosition} COLUM ${columPosition} SHIPLENGTH ${shipLength}`)
-        this.#howManyShipsUsed[ship]++
-        return true;
-      }
-      return false;
+  }
+
+  #outOfBounds (rotation, columPosition, rowPosition, shipLength, ship) {
+    if (
+      (rotation === 'horizontal' && columPosition + shipLength > 10) ||
+      (rotation === 'vertical' && rowPosition + shipLength > 10)
+    ) {
+      console.warn(`Ship goes ou of bounds at ROW ${rowPosition} COLUM ${columPosition} SHIPLENGTH ${shipLength}`)
+      this.#howManyShipsUsed[ship]++
+      return true
     }
+    return false
+  }
 
   #placeShip (ship, position, rotation, board) {
     function isTaken (row, column) {
@@ -82,10 +81,10 @@
       }
       return false
     }
-    
-    let counter = 0;
 
-    if (rotation !== 'vertical' && rotation !== 'horizontal') return console.log('Rotation is invalid: ' + rotation)
+    let counter = 0
+
+    if (rotation !== 'vertical' && rotation !== 'horizontal') { return console.log('Rotation is invalid: ' + rotation) }
     // get the colum Position; extract it from the string and translate it from an obj
     const letter = position.slice(-1)
     const columPosition = this.#positionAtoB[letter]
@@ -96,8 +95,10 @@
     // get the length of the ship
     const shipLength = parseInt(ship.slice(0, 1))
 
-    //checks if the ship in the playfield
-    if (this.#outOfBounds(rotation, columPosition, rowPosition, shipLength, ship)) return;
+    // checks if the ship in the playfield
+    if (
+      this.#outOfBounds(rotation, columPosition, rowPosition, shipLength, ship)
+    ) { return }
 
     // if @ position of row/column already a ship, don't place any
     if (isTaken(rowPosition, columPosition)) {
@@ -109,26 +110,38 @@
     if (shipLength === 1) {
       board[rowPosition][columPosition] = this.#boardInfo['Has ship']
     } else if (shipLength > 1 && rotation === 'vertical') {
-      for (let i = rowPosition; i < (rowPosition + shipLength); i++) {
+      for (let i = rowPosition; i < rowPosition + shipLength; i++) {
         if (isTaken(i, columPosition)) {
-          console.warn(`At ${rowPosition} or ${columPosition} is already taken!`);
-          this.#resetPlacing(rowPosition, columPosition, counter, rotation, ship)
-          return;
+          console.warn(`At ${rowPosition} or ${columPosition} is already taken!`)
+          this.#resetPlacing(
+            rowPosition,
+            columPosition,
+            counter,
+            rotation,
+            ship
+          )
+          return
         }
         board[i][columPosition] = ''
         board[i][columPosition] = this.#boardInfo['Has ship']
-        counter ++;
+        counter++
       }
     } else if (shipLength > 1 && rotation === 'horizontal') {
-      for (let i = columPosition; i < (columPosition + shipLength); i++) {
+      for (let i = columPosition; i < columPosition + shipLength; i++) {
         if (isTaken(rowPosition, i)) {
-          console.warn(`At ${rowPosition} or ${columPosition} is already taken!`);
-          this.#resetPlacing(rowPosition, columPosition, counter, rotation, ship)
-          return;
+          console.warn(`At ${rowPosition} or ${columPosition} is already taken!`)
+          this.#resetPlacing(
+            rowPosition,
+            columPosition,
+            counter,
+            rotation,
+            ship
+          )
+          return
         }
         board[rowPosition][i] = ''
         board[rowPosition][i] = this.#boardInfo['Has ship']
-        counter++;
+        counter++
       }
     }
   }
@@ -147,7 +160,7 @@
         if (this.#checkShip(ship)) break
 
         this.#howManyShipsUsed['4-Long Ships']--
-        
+
         this.#placeShip(ship, position, rotation, board)
         break
 
@@ -179,52 +192,72 @@
         console.warn(`Something went wrong to place/ set the ship. Ship Value: ${ship}, Position: ${position}`)
     }
   }
-  //
-  // ATTACKING
-  //
 
-  receiveAttack(position, enemybBoard, displayEnemyBoard) {
+  //*
+  // *ATTACKING
+  //*
+
+  #attackRangeOutOfMap (columPosition, rowPosition) {
+    console.log('In attackRangeOutOfMao: ' + columPosition + rowPosition)
+    if (
+      (columPosition > 10) || // 9 > 10
+      (rowPosition > 10) ||
+      (rowPosition === undefined) ||
+      (columPosition === undefined)
+    ) {
+      console.warn(`Attack out of the map. COLUMN: ${columPosition}, ROW ${rowPosition}`)
+      return true
+    }
+    return false
+  }
+
+  receiveAttack (position, enemybBoard, displayEnemyBoard) {
     const letter = position.slice(-1)
     const columPosition = this.#positionAtoB[letter]
 
     const rowPosition = parseInt(position.slice(0, 1))
 
-    console.log(enemybBoard[rowPosition][columPosition])
+    console.log('In receiveAttack: ' + columPosition + ' ' + rowPosition)
 
-    if (enemybBoard[rowPosition][columPosition] === this.#boardInfo['Has ship']) {
+    if (this.#attackRangeOutOfMap(columPosition, rowPosition)) return
+
+    if (
+      enemybBoard[rowPosition][columPosition] === this.#boardInfo['Has ship']
+    ) {
       // HIT!
       console.log(`A Ship got hit! At Position ROW: ${rowPosition} COLUM: ${columPosition}`)
 
-      enemybBoard[rowPosition][columPosition] === this.#boardInfo['Ship got Hit']
-      displayEnemyBoard[rowPosition][columPosition] === this.#boardInfo['Ship got Hit']
+      enemybBoard[rowPosition][columPosition] = this.#boardInfo['Ship got Hit']
+      displayEnemyBoard[rowPosition][columPosition] = this.#boardInfo['Ship got Hit']
 
       return {
         gotHit: true,
         enemybBoard: 'Ship got Hit',
         displayEnemyBoard: 'Ship got Hit',
+        position
       }
     }
     // MISS!
-    displayEnemyBoard[rowPosition][columPosition] === this.#boardInfo['nothing']
+    displayEnemyBoard[rowPosition][columPosition] = this.#boardInfo.missed
 
     return {
       gotHit: false,
       enemybBoard: 'nothing',
-      displayEnemyBoard: 'nothing',
+      displayEnemyBoard: 'missed',
+      position
     }
   }
 }
-
-
 
 const board = new Gameboard()
 const newBoard = board.createBoard()
 
 board.setShip('4-Long Ships', '9A', 'horizontal', newBoard)
-board.setShip('3-Long Ships', '0J', 'horizontal', newBoard) 
-board.setShip('3-Long Ships', '0A', 'vertical', newBoard)  
-board.setShip("2-Long Ships", "0I", "horizontal", newBoard)
-board.setShip('3-Long Ships', '4H', 'horizontal', newBoard) 
-board.receiveAttack("0A", newBoard, newBoard)
+board.setShip('3-Long Ships', '0J', 'horizontal', newBoard)
+board.setShip('3-Long Ships', '0A', 'vertical', newBoard)
+board.setShip('2-Long Ships', '0I', 'horizontal', newBoard)
+board.setShip('3-Long Ships', '4H', 'horizontal', newBoard)
+const test = board.receiveAttack('0A', newBoard, newBoard)
+board.receiveAttack('1K', newBoard, newBoard)
+console.log(test)
 console.table(newBoard)
-
