@@ -50,7 +50,7 @@ export default class Gameboard {
   //*
   //* PLACE SHIP
   //*
-  #resetPlacing (rowPosition, columPosition, counter, rotation, ship) {
+  #resetPlacing (rowPosition, columPosition, counter, rotation, ship, board) {
     if (counter === 0) return
     if (rotation === 'horizontal') {
       this.#howManyShipsUsed[ship]++
@@ -131,7 +131,7 @@ export default class Gameboard {
       for (let i = rowPosition; i < rowPosition + shipLength; i++) {
         if (isTaken(i, columPosition)) {
           console.warn(
-						`At ${rowPosition} or ${columPosition} is already taken!`
+            `At ${rowPosition} or ${columPosition} is already taken!`
           )
           this.#resetPlacing(
             rowPosition,
@@ -151,7 +151,7 @@ export default class Gameboard {
       for (let i = columPosition; i < columPosition + shipLength; i++) {
         if (isTaken(rowPosition, i)) {
           console.warn(
-						`At ${rowPosition} or ${columPosition} is already taken!`
+            `At ${rowPosition} or ${columPosition} is already taken!`
           )
           this.#resetPlacing(
             rowPosition,
@@ -214,7 +214,7 @@ export default class Gameboard {
 
       default:
         console.warn(
-					`Something went wrong to place/ set the ship. Ship Value: ${ship}, Position: ${position}`
+          `Something went wrong to place/ set the ship. Ship Value: ${ship}, Position: ${position}`
         )
     }
   }
@@ -227,12 +227,12 @@ export default class Gameboard {
     console.log('In attackRangeOutOfMap: ' + columPosition + rowPosition)
     if (
       columPosition > 10 ||
-			rowPosition > 10 ||
-			rowPosition === undefined ||
-			columPosition === undefined
+      rowPosition > 10 ||
+      rowPosition === undefined ||
+      columPosition === undefined
     ) {
       console.warn(
-				`Attack out of the map. COLUMN: ${columPosition}, ROW ${rowPosition}`
+        `Attack out of the map. COLUMN: ${columPosition}, ROW ${rowPosition}`
       )
       return true
     }
@@ -254,12 +254,12 @@ export default class Gameboard {
     ) {
       // HIT!
       console.log(
-				`A Ship got hit! At Position ROW: ${rowPosition} COLUM: ${columPosition}`
+        `A Ship got hit! At Position ROW: ${rowPosition} COLUM: ${columPosition}`
       )
 
       enemybBoard[rowPosition][columPosition] = this.#boardInfo['Ship got Hit']
       displayEnemyBoard[rowPosition][columPosition] =
-				this.#boardInfo['Ship got Hit']
+        this.#boardInfo['Ship got Hit']
 
       this.shipRemainig--
       this.#logAnyAttacks({ position, Hit: 'Yes' })
@@ -296,31 +296,3 @@ export default class Gameboard {
     return this.shipRemainig === 0
   }
 }
-
-const board = new Gameboard()
-const newBoard = board.createBoard()
-
-board.setShip('4-Long Ships', '9A', 'horizontal', newBoard)
-board.setShip('3-Long Ships', '0J', 'horizontal', newBoard)
-board.setShip('3-Long Ships', '0A', 'vertical', newBoard)
-board.setShip('2-Long Ships', '0I', 'horizontal', newBoard)
-board.setShip('3-Long Ships', '4H', 'horizontal', newBoard)
-
-const test = board.receiveAttack('0A', newBoard, newBoard)
-board.receiveAttack('1A', newBoard, newBoard)
-board.receiveAttack('2A', newBoard, newBoard)
-board.receiveAttack('0I', newBoard, newBoard)
-board.receiveAttack('0J', newBoard, newBoard)
-board.receiveAttack('4H', newBoard, newBoard)
-board.receiveAttack('4I', newBoard, newBoard)
-board.receiveAttack('4J', newBoard, newBoard)
-board.receiveAttack('9A', newBoard, newBoard)
-board.receiveAttack('9B', newBoard, newBoard)
-board.receiveAttack('9C', newBoard, newBoard)
-board.receiveAttack('9D', newBoard, newBoard)
-board.receiveAttack('1B', newBoard, newBoard)
-console.log(test)
-console.table(newBoard)
-console.table(board.showLogs())
-
-console.log(board.allShipDestroyed())
