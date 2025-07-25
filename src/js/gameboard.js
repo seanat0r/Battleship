@@ -262,6 +262,7 @@
 				this.#boardInfo['Ship got Hit']
 
       this.shipRemainig--
+      this.#logAnyAttacks({ position, Hit: 'Yes' })
       return {
         gotHit: true,
         enemybBoard: 'Ship got Hit',
@@ -271,7 +272,7 @@
     }
     // MISS!
     displayEnemyBoard[rowPosition][columPosition] = this.#boardInfo.missed
-
+    this.#logAnyAttacks({ position, Hit: 'No' })
     return {
       gotHit: false,
       enemybBoard: 'nothing',
@@ -285,6 +286,10 @@
       return console.log(`No Attack to log: ${inputAttack}`)
     }
     this.#attacklogs.push(inputAttack)
+  }
+
+  showLogs () {
+    return this.#attacklogs
   }
 
   allShipDestroyed () {
@@ -316,5 +321,6 @@ board.receiveAttack('9D', newBoard, newBoard)
 
 console.log(test)
 console.table(newBoard)
+console.table(board.showLogs())
 
 console.log(board.allShipDestroyed())
