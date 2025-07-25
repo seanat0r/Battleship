@@ -1,4 +1,4 @@
-/* export  default */ class Gameboard {
+export default class Gameboard {
   constructor () {
     this.shipPlaced = 0
     this.shipRemainig = 0
@@ -318,7 +318,7 @@ board.receiveAttack('9A', newBoard, newBoard)
 board.receiveAttack('9B', newBoard, newBoard)
 board.receiveAttack('9C', newBoard, newBoard)
 board.receiveAttack('9D', newBoard, newBoard)
-
+board.receiveAttack('1B', newBoard, newBoard)
 console.log(test)
 console.table(newBoard)
 console.table(board.showLogs())
