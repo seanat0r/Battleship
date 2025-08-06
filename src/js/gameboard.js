@@ -220,7 +220,7 @@ export default class Gameboard {
   }
 
   //*
-  //* ATTACKING
+  //* ATTACKING ✅
   //*
 
   #attackRangeOutOfMap (columPosition, rowPosition) {
