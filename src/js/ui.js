@@ -1,5 +1,10 @@
 //* Use for Global DOM Structure
-export class AppUI {}
+export class AppUI {
+  #gamemode = null
+  #buttonAI = document.querySelector('#buttonAI')
+  #buttonLocal = document.querySelector('#buttonLocal')
+  
+}
 
 //* Use for placing the ships with UI
 export class ShipPlacementUI {}
