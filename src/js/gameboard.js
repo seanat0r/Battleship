@@ -33,7 +33,7 @@ export default class Gameboard {
 
   #attacklogs = []
   //*
-  //* CREATING BOARD
+  //* CREATING BOARD ✅
   //*
 
   createBoard () {
@@ -48,7 +48,7 @@ export default class Gameboard {
   }
 
   //*
-  //* PLACE SHIP
+  //* PLACE SHIP ✅
   //*
   #resetPlacing (rowPosition, columPosition, counter, rotation, ship, board) {
     if (counter === 0) return

@@ -22,4 +22,16 @@ export default class Player {
 
     this.ownBoard.receiveAttack(position, enemybBoard, this.#displayEnemyBoard)
   }
+
+  placeShip (ship, position, rotation) {
+    this.ownBoard.setShip(ship, position, rotation, this.ownBoard)
+  }
+
+  attackLogs () {
+    this.ownBoard.showLogs()
+  }
+
+  allShipDestroyed () {
+    this.ownBoard.allShipDestroyed()
+  }
 }
