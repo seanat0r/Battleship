@@ -1,0 +1,81 @@
+/** HEADER */
+header {
+    display: flex;
+    justify-content: space-around; 
+    align-items: baseline;
+    border-bottom: 2px dashed #000;
+    background-color: #fff;
+}
+
+/** MAIN */
+#mainUI {
+    background-color: #fff;
+    z-index: 1;
+    position: relative;
+    padding: 1rem;
+}
+#mainUI > section {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-top: 1rem;
+}
+#buttonAI, #buttonLocal {
+    border: 2px solid #000;
+    border-radius: 25% 10%;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+}
+#buttonAI:hover, #buttonLocal:hover {
+    background-color: #007acc;
+}
+#buttonAI:active, #buttonLocal:active {
+    background-color: #005fa3;
+}
+/** DESIGN */
+
+svg {
+    background-color: transparent;
+}
+.wave-wrapper {
+  position: relative;
+  width: 100%;
+  height: 320px; /* oder passend zur ViewBox */
+}
+
+#thirdwave,
+#secondWave,
+#firstWave {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: auto;
+}
+
+#secondWave {
+  z-index: 1;
+  
+}
+
+#firstWave {
+  z-index: 2;
+}
+#thirdwave {
+    z-index: 0;
+    background-color: #fff;
+}
+
+/** LOCAL GAEME MENU */
+
+#sendNameBtn {
+  border: 2px solid #000;
+  border-radius: 25% 10%;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+}
+#nameField1, #nameField2 {
+  border: 2px solid #000;
+  border-radius: 25% 10%;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+}
