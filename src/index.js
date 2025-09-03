@@ -10,8 +10,10 @@ import './styles/style.css'
 
 // Your code here
 const localUI = new LocalGameUI()
+
 async function localGameUI () {
-  const name = await localUI.eventListenerAddElements()
+  const name = await localUI.eventListenerForNameInputLayout()
+  if (!name) return
   console.log(name)
 }
 localGameUI()

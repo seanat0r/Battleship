@@ -1,3 +1,6 @@
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
+
 //* Use for Global DOM Structure
 const gamemode = null
 const buttonAI = document.querySelector('#buttonAI')
@@ -40,53 +43,71 @@ export class LocalGameUI {
     }
   }
 
-  eventForName () {
-    return new Promise((resolve, reject) => {
-      sectionArea.innerHTML = ''
-      const name1 = this.createElementInput(1)
-      const name2 = this.createElementInput(2)
-      const btnSend = this.createElementSend()
-
-      const timeoutID = setTimeout(() => {
-        console.log('Timeout, 5 mins over')
-      }, 300000)
-
-      btnSend.addEventListener('click', () => {
-        if (!name1 || !name2) {
-          return console.error(
-            `nameField 1 and/or 2 couldn't find: ${name1} or ${name2}`
-          )
-        }
-
-        if (name1.value === null && name2.value === null) {
-          name1.setAttribute('value', 'User 1')
-          name2.setAttribute('value', 'User 2')
-        }
-
-        clearTimeout(timeoutID)
-        console.log('Timer stoped')
-
-        resolve(this.getName(name1, name2))
-      })
-    })
+  //* create Layout for name Inputs
+  nameInputLayout () {
+    sectionArea.innerHTML = ''
+    this.createElementInput(1)
+    this.createElementInput(2)
+    this.createElementSend()
   }
 
   //* create input field and send btn for names
-  eventListenerAddElements () {
-    return new Promise((resolve, reject) => {
-      buttonLocal.addEventListener(
-        'click',
-        () => {
-          this.eventForName()
-            .then((names) => {
-              resolve(names)
-            })
-            .catch((err) => {
-              reject(err)
-            })
-        },
-        { once: true }
-      )
+  eventListenerForNameInputLayout () {
+    buttonLocal.addEventListener('click', async () => {
+      this.nameInputLayout()
+      const nameObj = await this.addEventListenerForNameOutpu()
+      if (!nameObj) return
+      console.log(nameObj)
+    })
+  }
+
+  //* Checking input value from name1 and name2
+  checkNameValue (name1, name2) {
+    if (!name1 || !name2) {
+      console.error(`nameField 1 and/or 2 couldn't find: ${name1} or ${name2}`)
+      return false
+    }
+    if (name1.value === name2.value) return false
+
+    if (name1.value === '' || name2.value === '') return false
+
+    if (name1.value === null && name2.value === null) {
+      name1.setAttribute('value', 'User 1')
+      name2.setAttribute('value', 'User 2')
+    }
+    return true
+  }
+
+  //* logic for sending
+  sendingNameOutput () {
+    console.log('im here')
+    const name1 = document.querySelector('#nameField1')
+    const name2 = document.querySelector('#nameField2')
+
+    if (!this.checkNameValue(name1, name2)) {
+      window.alert('No name in the box or has 2 identicall name')
+      return null
+    }
+    return this.getName(name1, name2)
+  }
+
+  //* eventlistener for sending
+  addEventListenerForNameOutpu () {
+    return new Promise((resolve) => {
+      const sendNameBtn = document.querySelector('#sendNameBtn')
+
+      const handler = () => {
+        const names = this.sendingNameOutput()
+
+        if (!names) {
+          return
+        }
+
+        sendNameBtn.removeEventListener('click', handler)
+        resolve(names)
+      }
+
+      sendNameBtn.addEventListener('click', handler)
     })
   }
 }
